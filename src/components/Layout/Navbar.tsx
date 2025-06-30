@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Gamepad2, Search, Settings, LogOut, User, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -16,27 +17,31 @@ export function Navbar() {
     navigate('/');
   };
 
+  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'relative text-[15.5px] font-medium transition-colors hover:text-purple-500 py-2',
+      'after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-purple-500 after:transition-[width] after:duration-300 after:ease-in-out',
+      isActive ? 'text-purple-500 after:w-full' : 'after:w-0'
+    );
+
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full">
-      <div className="w-full px-4 lg:px-8 h-16 flex items-center justify-between">
+      <div className="w-full px-4 lg:px-8 h-[110px] flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="flex items-center space-x-2">
+          <NavLink to="/" className="flex items-center space-x-2">
             <Gamepad2 className="h-8 w-8 text-purple-500" />
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
-              GameStore
-            </span>
-          </Link>
+          </NavLink>
           
-          <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-sm font-medium hover:text-purple-500 transition-colors">
+          <div className="hidden md:flex items-center space-x-8">
+            <NavLink to="/" className={navLinkClasses}>
               Home
-            </Link>
-            <Link to="/games" className="text-sm font-medium hover:text-purple-500 transition-colors">
+            </NavLink>
+            <NavLink to="/games" className={navLinkClasses}>
               Games
-            </Link>
-            <Link to="/categories" className="text-sm font-medium hover:text-purple-500 transition-colors">
+            </NavLink>
+            <NavLink to="/categories" className={navLinkClasses}>
               Categories
-            </Link>
+            </NavLink>
           </div>
         </div>
 
