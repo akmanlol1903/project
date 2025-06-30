@@ -19,11 +19,11 @@ export function Navbar() {
   const navLinksRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  const navItems = [
+  const navItems = React.useMemo(() => [
     { to: '/', text: 'Home' },
     { to: '/games', text: 'Games' },
     { to: '/categories', text: 'Categories' },
-  ];
+  ], []);
 
   useEffect(() => {
     const calculateActiveStyle = () => {
@@ -45,9 +45,15 @@ export function Navbar() {
       }
     };
     
-    const timeoutId = setTimeout(calculateActiveStyle, 50);
-    return () => clearTimeout(timeoutId);
-  }, [location.pathname]);
+    const timeoutId = setTimeout(calculateActiveStyle, 100);
+    
+    window.addEventListener('resize', calculateActiveStyle);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', calculateActiveStyle);
+    };
+  }, [location.pathname, navItems]);
 
   const handleMouseEnter = (index: number) => {
     const link = linkRefs.current[index];
@@ -71,15 +77,14 @@ export function Navbar() {
 
   const navLinkClasses = (isActive: boolean) =>
     cn(
-      'relative text-[15.5px] font-medium transition-colors hover:text-purple-500 py-2 z-10',
-      isActive ? 'text-purple-500' : ''
+      'relative text-[15.5px] font-medium transition-colors py-2 z-10',
+      isActive ? 'text-purple-500' : 'text-black dark:text-white hover:text-purple-500'
     );
 
   return (
-    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full">
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full font-nhaas">
       <div className="w-full h-[110px] flex items-center justify-between px-[54.5px]">
         
-        {/* LOGO VE YAZILAR ARASINDAKİ BOŞLUK GÜNCELLENDİ */}
         <div className="flex items-center space-x-[34px]">
           <NavLink to="/" className="flex items-center space-x-2">
             <img src="/logo.png" alt="GameStore Logo" className="h-7 w-auto" />

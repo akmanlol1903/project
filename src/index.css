@@ -1,3 +1,12 @@
+/* CDN import kuralı silindi ve yerel font tanımı eklendi */
+@font-face {
+  font-family: 'NHaasGrotesk';
+  /* Font dosyanızın public klasöründeki yolunu belirttiğinizden emin olun */
+  src: url('/fonts/NHaasGroteskTXPro-55Rg.ttf') format('truetype');
+  font-weight: 400; /* Font'un kendi kalınlığı. 400 normal, 500 medium, 700 bold demektir. */
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
