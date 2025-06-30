@@ -11,30 +11,33 @@ export function Home() {
   const featuredGames = mockGames.filter(game => game.featured);
   const topRatedGames = [...mockGames].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
+  // En son eklenen oyunu bulmak için oyunları tarihe göre sırala
+  const latestGame = [...mockGames].sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime())[0];
+
   return (
     <div className="min-h-screen w-full">
       {/* Hero Section */}
-      {/* YÜKSEKLİK VE HİZALAMA GÜNCELLENDİ */}
-      <section className="relative bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-white w-full h-[calc(100vh-110px)] flex flex-col items-center justify-center">
-        <div className="absolute inset-0 bg-black/20" />
+      <section
+        className="relative text-white w-full h-[calc(100vh-110px)] flex flex-col items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${latestGame.imageUrl})` }}
+      >
+        {/* Arka plan karartma efekti */}
+        <div className="absolute inset-0 bg-black/60" />
+
         <div className="w-full px-4 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="mb-4 bg-purple-500/20 text-purple-200 border-purple-400">
-              <Star className="mr-1 h-3 w-3" />
-              Premium Gaming Experience
-            </Badge>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-              Discover Amazing Games
+              {latestGame.title}
             </h1>
-            <p className="text-xl md:text-2xl text-purple-100 mb-8 leading-relaxed">
-              Download the latest and greatest games. Join millions of gamers worldwide in epic adventures.
+            <p className="text-xl md:text-2xl text-purple-100 mb-8 leading-relaxed line-clamp-3">
+              {latestGame.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-lg px-8 py-6" onClick={() => navigate('/games')}>
-                Browse Games
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-lg px-8 py-6" onClick={() => navigate(`/game/${latestGame.id}`)}>
+                Şimdi İncele
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-900 text-lg px-8 py-6">
-                Learn More
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-purple-900 text-lg px-8 py-6" onClick={() => navigate('/games')}>
+                Tüm Oyunlar
               </Button>
             </div>
           </div>

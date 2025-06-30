@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'nhaas': ['"NHaasGrotesk"', 'sans-serif'],
+        'nhaas': ['NHaasGrotesk', 'sans-serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
