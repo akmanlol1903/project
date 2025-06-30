@@ -1,9 +1,9 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Gamepad2, Search, Settings, LogOut, User, Shield } from 'lucide-react';
+import { Search, Settings, LogOut, User, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -11,37 +11,106 @@ import { cn } from '@/lib/utils';
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0, opacity: 0 });
+  const [activeLinkStyle, setActiveLinkStyle] = useState({ width: 0, left: 0, opacity: 0 });
+
+  const navLinksRef = useRef<HTMLDivElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+
+  const navItems = [
+    { to: '/', text: 'Home' },
+    { to: '/games', text: 'Games' },
+    { to: '/categories', text: 'Categories' },
+  ];
+
+  useEffect(() => {
+    const calculateActiveStyle = () => {
+      const activeLinkIndex = navItems.findIndex(item => item.to === location.pathname);
+      const activeLink = linkRefs.current[activeLinkIndex];
+      
+      if (activeLink) {
+        const style = {
+          width: activeLink.offsetWidth,
+          left: activeLink.offsetLeft,
+          opacity: 1
+        };
+        setActiveLinkStyle(style);
+        setUnderlineStyle(style);
+      } else {
+        const style = { width: 0, left: 0, opacity: 0 };
+        setActiveLinkStyle(style);
+        setUnderlineStyle(style);
+      }
+    };
+    
+    const timeoutId = setTimeout(calculateActiveStyle, 50);
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname]);
+
+  const handleMouseEnter = (index: number) => {
+    const link = linkRefs.current[index];
+    if (link) {
+      setUnderlineStyle({
+        width: link.offsetWidth,
+        left: link.offsetLeft,
+        opacity: 1
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setUnderlineStyle(activeLinkStyle);
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
+  const navLinkClasses = (isActive: boolean) =>
     cn(
-      'relative text-[15.5px] font-medium transition-colors hover:text-purple-500 py-2',
-      'after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-purple-500 after:transition-[width] after:duration-300 after:ease-in-out',
-      isActive ? 'text-purple-500 after:w-full' : 'after:w-0'
+      'relative text-[15.5px] font-medium transition-colors hover:text-purple-500 py-2 z-10',
+      isActive ? 'text-purple-500' : ''
     );
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full">
-      <div className="w-full px-4 lg:px-8 h-[110px] flex items-center justify-between">
-        <div className="flex items-center space-x-8">
+      <div className="w-full h-[110px] flex items-center justify-between px-[54.5px]">
+        
+        {/* LOGO VE YAZILAR ARASINDAKİ BOŞLUK GÜNCELLENDİ */}
+        <div className="flex items-center space-x-[34px]">
           <NavLink to="/" className="flex items-center space-x-2">
-            <Gamepad2 className="h-8 w-8 text-purple-500" />
+            <img src="/logo.png" alt="GameStore Logo" className="h-7 w-auto" />
           </NavLink>
           
-          <div className="hidden md:flex items-center space-x-8">
-            <NavLink to="/" className={navLinkClasses}>
-              Home
-            </NavLink>
-            <NavLink to="/games" className={navLinkClasses}>
-              Games
-            </NavLink>
-            <NavLink to="/categories" className={navLinkClasses}>
-              Categories
-            </NavLink>
+          <div 
+            className="hidden md:flex items-center relative" 
+            ref={navLinksRef}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div className="flex items-center space-x-[15px]">
+              {navItems.map((item, index) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  ref={el => linkRefs.current[index] = el}
+                  className={({ isActive }) => navLinkClasses(isActive)}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                >
+                  {item.text}
+                </NavLink>
+              ))}
+            </div>
+            <div
+              className="absolute bottom-1 h-[1px] bg-purple-500 transition-all duration-300 ease-in-out"
+              style={{
+                left: `${underlineStyle.left}px`,
+                width: `${underlineStyle.width}px`,
+                opacity: underlineStyle.opacity
+              }}
+            />
           </div>
         </div>
 
@@ -104,6 +173,7 @@ export function Navbar() {
             </div>
           )}
         </div>
+
       </div>
     </nav>
   );

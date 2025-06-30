@@ -14,7 +14,8 @@ export function Home() {
   return (
     <div className="min-h-screen w-full">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-white py-20 w-full">
+      {/* YÜKSEKLİK VE HİZALAMA GÜNCELLENDİ */}
+      <section className="relative bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 text-white w-full h-[calc(100vh-110px)] flex flex-col items-center justify-center">
         <div className="absolute inset-0 bg-black/20" />
         <div className="w-full px-4 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
